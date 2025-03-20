@@ -16,8 +16,6 @@ client = genai.Client(
     api_key=os.environ.get("GEMINI_API_KEY", "AIzaSyAoFRwaHLsR1gCRXXw7KvhxECiluRYFHpo"),
 )
 
-# model = "gemma-3-27b-it"
-# model = "gemini-2.0-flash-lite"
 model = "gemini-2.0-flash"
 
 
