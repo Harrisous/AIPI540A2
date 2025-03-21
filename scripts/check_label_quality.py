@@ -1,9 +1,12 @@
 import pandas as pd
 import json
 from tqdm import tqdm
+import pathlib
+
+ROOT_DIR = pathlib.Path(__file__).parent.parent
 
 # Read processed data
-df = pd.read_csv("models/data/processed_data.csv")
+df = pd.read_csv(ROOT_DIR / "models/data/processed_data.csv")
 
 # Add new column to mark if requirements are met
 df["is_valid_reconstruction"] = False
@@ -45,5 +48,5 @@ print(f"Correctly reconstructed: {valid_count}")
 print(f"Accuracy: {percentage:.2f}%")
 
 # Save results
-df.to_csv("models/data/processed_data_checked.csv", index=False)
+df.to_csv(ROOT_DIR / "models/data/processed_data_checked.csv", index=False)
 print("Results saved to models/data/processed_data_checked.csv")

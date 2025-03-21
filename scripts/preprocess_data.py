@@ -1,4 +1,5 @@
 import json
+import pathlib
 import pandas as pd
 import os
 from tqdm import tqdm
@@ -11,11 +12,13 @@ from tenacity import (
     retry_if_exception_type,
 )
 
-from llm_api import llm_generate
+from scripts.llm_api import llm_generate
+
+ROOT_DIR = pathlib.Path(__file__).parent.parent
 
 # Intermediate file paths
-TEMP_FILE = "models/data/processing_temp.csv"
-OUTPUT_FILE = "models/data/processed_data.csv"
+TEMP_FILE = ROOT_DIR / "models/data/processing_temp.csv"
+OUTPUT_FILE = ROOT_DIR / "models/data/processed_data.csv"
 # Number of threads for parallel processing
 NUM_WORKERS = 20
 
@@ -56,7 +59,7 @@ if os.path.exists(TEMP_FILE):
 else:
     print("Starting processing from scratch...")
     df = pd.read_csv(
-        "models/data/sentiment-analysis-dataset-google-play-app-reviews.csv"
+        ROOT_DIR / "models/data/sentiment-analysis-dataset-google-play-app-reviews.csv"
     )
     # Create new column
     df["sub_comments"] = None
