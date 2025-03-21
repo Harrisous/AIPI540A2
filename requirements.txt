@@ -4,3 +4,4 @@ pandas
 tqdm
 tenacity
 python-dotenv
+scikit-learn
