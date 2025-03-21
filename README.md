@@ -1,8 +1,30 @@
 # AIPI540 A2
 
 
-## Naive approach
+## install dependencies
 
-## Classical Machine Learning Approach
+```bash
+pip install -r requirements.txt
+```
 
-## Deep Learning
+## Data Preprocessing
+
+By running the following command, the data will be preprocessed and saved to `models/data/processed_data.csv`.
+
+```bash
+python scripts/preprocess_data.py
+```
+
+To check the quality of the processed data, run the following command:
+
+```bash
+python scripts/check_label_quality.py
+```
+
+## Approaches
+
+### Naive approach
+
+### Classical Machine Learning Approach
+
+### Deep Learning
