@@ -1,3 +1,5 @@
+streamlit
+google-play-scraper
 anyascii==0.3.2
 asttokens==3.0.0
 beautifulsoup4==4.13.3
