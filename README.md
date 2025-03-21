@@ -1,11 +1,11 @@
 # AIPI540 A2
 
+
 ## install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
-
 
 ## Data Preprocessing
 
@@ -20,3 +20,11 @@ To check the quality of the processed data, run the following command:
 ```bash
 python scripts/check_label_quality.py
 ```
+
+## Approaches
+
+### Naive approach
+
+### Classical Machine Learning Approach
+
+### Deep Learning
