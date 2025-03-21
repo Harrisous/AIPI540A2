@@ -1,7 +1,5 @@
 # AIPI540 A2
 
-# AIPI540 A2
-
 Analyzing customer reviews represent a significant aspect of every marketing / tech support team. However, they do not necessarily give the most informative info. In particular, there may be a part of the sentence that has a relatively positive sentiment but another part could be relatively negative. Furthermore, there may be cases where multiple topics are included in a particular review. It thus becomes a necessity to map the sentiment and topic to specific parts of the sentence. 
 
 For instance, a review may be "I like how easily this app makes tracking my daily healh habits but not a fan of the increased monthly subscription cost". Obviously, the first part represents a positive review for the app features and the review turns negative for pricing. Traditional sentiment analysis may not be able to capture the nunace of customer reviews well enough. 
