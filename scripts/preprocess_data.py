@@ -17,8 +17,8 @@ from scripts.llm_api import llm_generate
 ROOT_DIR = pathlib.Path(__file__).parent.parent
 
 # Intermediate file paths
-TEMP_FILE = ROOT_DIR / "models/data/processing_temp.csv"
-OUTPUT_FILE = ROOT_DIR / "models/data/processed_data.csv"
+TEMP_FILE = ROOT_DIR / "data/processed/processing_temp.csv"
+OUTPUT_FILE = ROOT_DIR / "data/processed/processed_data.csv"
 # Number of threads for parallel processing
 NUM_WORKERS = 20
 
@@ -49,72 +49,81 @@ def process_single_record(record):
         return index, None
 
 
-# Check if intermediate file exists
-if os.path.exists(TEMP_FILE):
-    print(f"Found intermediate file, continuing processing...")
-    df = pd.read_csv(TEMP_FILE)
-    # Calculate number of processed records
-    processed = df["sub_comments"].notna().sum()
-    print(f"Processed {processed}/{len(df)} records")
-else:
-    print("Starting processing from scratch...")
-    df = pd.read_csv(
-        ROOT_DIR / "models/data/sentiment-analysis-dataset-google-play-app-reviews.csv"
-    )
-    # Create new column
-    df["sub_comments"] = None
-    # Save initial state
-    df.to_csv(TEMP_FILE, index=False)
-
-try:
-    # Get unprocessed records
-    unprocessed_df = df[df["sub_comments"].isna()]
-
-    if len(unprocessed_df) > 0:
-        print(
-            f"Starting parallel processing of {len(unprocessed_df)} records using {NUM_WORKERS} worker threads..."
-        )
-        # Prepare task list
-        tasks = [(index, row["content"]) for index, row in unprocessed_df.iterrows()]
-
-        # Create progress bar
-        pbar = tqdm(total=len(tasks))
-
-        # Use thread pool for parallel processing
-        with ThreadPoolExecutor(max_workers=NUM_WORKERS) as executor:
-            # Submit all tasks
-            future_to_index = {
-                executor.submit(process_single_record, task): task[0] for task in tasks
-            }
-
-            # Process completed tasks
-            for future in as_completed(future_to_index):
-                index, result = future.result()
-                if result is not None:
-                    df.at[index, "sub_comments"] = result
-
-                # Update progress bar
-                pbar.update(1)
-
-                # Save progress after each record completion
-                if pbar.n % 5 == 0 or pbar.n == len(
-                    tasks
-                ):  # Save every 5 records to reduce I/O operations
-                    df.to_csv(TEMP_FILE, index=False)
-
-                # Add a short delay to prevent API request throttling
-                # time.sleep(0.1)
-
-            pbar.close()
-
-    # After all processing is complete, save to final file and delete intermediate file
-    df.to_csv(OUTPUT_FILE, index=False)
+def preprocess():
+    """
+    Preprocess data function that can be called from setup.py
+    Processes raw reviews and generates structured sub-comments for each review.
+    """
+    # Check if intermediate file exists
     if os.path.exists(TEMP_FILE):
-        os.remove(TEMP_FILE)
-    print("Processing complete! Intermediate file deleted.")
+        print(f"Found intermediate file, continuing processing...")
+        df = pd.read_csv(TEMP_FILE)
+        # Calculate number of processed records
+        processed = df["sub_comments"].notna().sum()
+        print(f"Processed {processed}/{len(df)} records")
+    else:
+        print("Starting processing from scratch...")
+        df = pd.read_csv(
+            ROOT_DIR / "data/raw/sentiment-analysis-dataset-google-play-app-reviews.csv"
+        )
+        # Create new column
+        df["sub_comments"] = None
+        # Save initial state
+        df.to_csv(TEMP_FILE, index=False)
 
-except Exception as e:
-    # Save current progress when exception occurs
-    df.to_csv(TEMP_FILE, index=False)
-    print(f"Processing interrupted: {e}")
-    print(f"Progress saved to {TEMP_FILE}, will continue from checkpoint next time.")
+    try:
+        # Get unprocessed records
+        unprocessed_df = df[df["sub_comments"].isna()]
+
+        if len(unprocessed_df) > 0:
+            print(
+                f"Starting parallel processing of {len(unprocessed_df)} records using {NUM_WORKERS} worker threads..."
+            )
+            # Prepare task list
+            tasks = [(index, row["content"]) for index, row in unprocessed_df.iterrows()]
+
+            # Create progress bar
+            pbar = tqdm(total=len(tasks))
+
+            # Use thread pool for parallel processing
+            with ThreadPoolExecutor(max_workers=NUM_WORKERS) as executor:
+                # Submit all tasks
+                future_to_index = {
+                    executor.submit(process_single_record, task): task[0] for task in tasks
+                }
+
+                # Process completed tasks
+                for future in as_completed(future_to_index):
+                    index, result = future.result()
+                    if result is not None:
+                        df.at[index, "sub_comments"] = result
+
+                    # Update progress bar
+                    pbar.update(1)
+
+                    # Save progress after each record completion
+                    if pbar.n % 5 == 0 or pbar.n == len(
+                        tasks
+                    ):  # Save every 5 records to reduce I/O operations
+                        df.to_csv(TEMP_FILE, index=False)
+
+                    # Add a short delay to prevent API request throttling
+                    # time.sleep(0.1)
+
+                pbar.close()
+
+        # After all processing is complete, save to final file and delete intermediate file
+        df.to_csv(OUTPUT_FILE, index=False)
+        if os.path.exists(TEMP_FILE):
+            os.remove(TEMP_FILE)
+        print("Processing complete! Intermediate file deleted.")
+
+    except Exception as e:
+        # Save current progress when exception occurs
+        df.to_csv(TEMP_FILE, index=False)
+        print(f"Processing interrupted: {e}")
+        print(f"Progress saved to {TEMP_FILE}, will continue from checkpoint next time.")
+
+
+if __name__ == "__main__":
+    preprocess()
