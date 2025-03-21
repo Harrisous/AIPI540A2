@@ -1,4 +1,3 @@
-annotated-types==0.7.0
 anyascii==0.3.2
 anyio==4.9.0
 appnope==0.1.4
@@ -100,3 +99,6 @@ urllib3==2.3.0
 wcwidth==0.2.13
 websockets==15.0.1
 wrapt==1.17.2
+streamlit
+google-play-scraper
+annotated-types==0.7.0
