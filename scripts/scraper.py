@@ -88,22 +88,29 @@ apps = [
     {"name": "Adobe Lightroom", "package_name": "com.adobe.lrmobile"}
 ]
 
-# Fetch reviews for all apps
-all_reviews = fetch_app_reviews(apps)
+def main():
+    """
+    Main function to fetch app reviews.
+    """
+    # Fetch reviews for all apps
+    all_reviews = fetch_app_reviews(apps)
 
-# Save reviews to a JSON file
-with open('diverse_app_reviews.json', 'w', encoding='utf-8') as f:
-    json.dump(all_reviews, f, ensure_ascii=False, indent=4, default=convert_datetime)
+    # Save reviews to a JSON file
+    with open('data/raw/diverse_app_reviews.json', 'w', encoding='utf-8') as f:
+        json.dump(all_reviews, f, ensure_ascii=False, indent=4, default=convert_datetime)
 
-print("Reviews have been saved to 'diverse_app_reviews.json'")
+    print("Reviews have been saved to 'data/raw/diverse_app_reviews.json'")
 
-# Display sample reviews for each app and rating
-for app_name, app_reviews in all_reviews.items():
-    print(f"\n=== Reviews for {app_name} ===")
-    for rating in range(1, 6):
-        print(f"\nRating {rating} star reviews:")
-        for review in app_reviews[rating][:3]:  # Display only 3 reviews per rating
-            print(f"Content: {review['content']}")
-            print(f"Score: {review['score']}")
-            print(f"Date: {review['date']}")
-            print("---")
+    # Display sample reviews for each app and rating
+    for app_name, app_reviews in all_reviews.items():
+        print(f"\n=== Reviews for {app_name} ===")
+        for rating in range(1, 6):
+            print(f"\nRating {rating} star reviews:")
+            for review in app_reviews[rating][:3]:  # Display only 3 reviews per rating
+                print(f"Content: {review['content']}")
+                print(f"Score: {review['score']}")
+                print(f"Date: {review['date']}")
+                print("---")
+
+if __name__ == "__main__":
+    main() 

@@ -51,7 +51,8 @@ def process_single_record(record):
 
 def preprocess():
     """
-    预处理数据函数，可供setup.py调用
+    Preprocess data function that can be called from setup.py
+    Processes raw reviews and generates structured sub-comments for each review.
     """
     # Check if intermediate file exists
     if os.path.exists(TEMP_FILE):
