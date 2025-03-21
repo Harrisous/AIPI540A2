@@ -2,8 +2,11 @@ import os
 from typing import List
 from google import genai
 from google.genai import types
-
 import pydantic
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 class SubComment(pydantic.BaseModel):
@@ -12,9 +15,15 @@ class SubComment(pydantic.BaseModel):
     sentiment: float
 
 
-client = genai.Client(
-    api_key=os.environ.get("GEMINI_API_KEY", "AIzaSyAoFRwaHLsR1gCRXXw7KvhxECiluRYFHpo"),
-)
+# Initialize the client with API key from environment variable
+# Will raise error if not found to avoid silent failures
+api_key = os.environ.get("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError(
+        "GEMINI_API_KEY environment variable not found. Please add it to your .env file."
+    )
+
+client = genai.Client(api_key=api_key)
 
 model = "gemini-2.0-flash"
 
